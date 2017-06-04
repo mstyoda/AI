@@ -9,7 +9,7 @@ from keras import backend as K
 import pandas as pd
 import numpy as np
 
-batch_size = 128
+batch_size = 256
 num_classes = 10
 epochs = 1
 
@@ -36,6 +36,7 @@ else:
     input_shape = (img_rows, img_cols, 1)
 
 ytr = keras.utils.to_categorical(ytr, num_classes)
+yte = keras.utils.to_categorical(yte, num_classes)
 
 x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
 (x_train,x_test) = (x_train[0:35000],x_train[35000:])
@@ -45,13 +46,12 @@ x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
 model = Sequential()
 # input: 100x100 images with 3 channels -> (100, 100, 3) tensors.
 # this applies 32 convolution filters of size 3x3 each.
-model.add(Conv2D(32, (5, 5), activation='relu', input_shape= input_shape))
-model.add(Conv2D(32, (5, 5), activation='relu'))
+model.add(Conv2D(20, (4, 4), activation='relu', input_shape= input_shape))
+model.add(Conv2D(20, (3, 3), activation='relu', input_shape= input_shape))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.25))
 
-model.add(Conv2D(64, (3, 3), activation='relu'))
-model.add(Conv2D(64, (3, 3), activation='relu'))
+model.add(Conv2D(32, (2, 2), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.25))
 
@@ -66,10 +66,10 @@ model.fit(x_train, y_train,
           batch_size=batch_size,
           epochs=epochs,
           verbose=1,
-          validation_data=(x_test, y_test))
+          validation_data=(xte, yte))
 
-score = model.evaluate(x_test, y_test, verbose=0)
+score = model.evaluate(xte, yte, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
-filepath = str(score[1]) + 'vgg.h5' 
+filepath = str(score[1]) + 'vgg_new.h5' 
 model.save(filepath)
